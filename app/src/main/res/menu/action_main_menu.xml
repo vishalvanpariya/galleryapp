@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/actionmode_delet"
+          android:title="Delete"
+          android:icon="@drawable/ic_delete_white_24dp"
+          app:showAsAction="always"/>
+
+    <item android:id="@+id/actionmode_movemediavalute"
+          android:title="Move To Media Vault"
+          app:showAsAction="never"
+    />
+
+    <item android:id="@+id/actionmode_share"
+          android:title="Share"
+          app:showAsAction="never"
+    />
+
+    <item android:id="@+id/actionmode_copy"
+          android:title="Copy"
+          app:showAsAction="never"
+    />
+    <item android:id="@+id/actionmode_move"
+          android:title="Move"
+          app:showAsAction="never"
+    />
+    <item android:id="@+id/actionmode_selectall"
+          android:title="Select All"
+          app:showAsAction="never"
+    />
+    <item android:id="@+id/actionmode_unselectall"
+          android:title="Unselect All"
+          app:showAsAction="never"
+    />
+
+
+
+
+</menu>
