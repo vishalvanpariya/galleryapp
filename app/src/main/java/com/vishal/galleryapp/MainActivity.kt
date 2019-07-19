@@ -4,17 +4,17 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.support.annotation.RequiresApi
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
-import android.support.v4.view.GravityCompat
-import android.support.v7.app.ActionBarDrawerToggle
+import androidx.annotation.RequiresApi
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
+import androidx.core.view.GravityCompat
+import androidx.appcompat.app.ActionBarDrawerToggle
 import android.view.MenuItem
-import android.support.v4.widget.DrawerLayout
-import android.support.design.widget.NavigationView
-import android.support.design.widget.TabLayout
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
+import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.material.navigation.NavigationView
+import com.google.android.material.tabs.TabLayout
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import com.vishal.galleryapp.MainScreen.MyOwnPageAdapter
 import kotlinx.android.synthetic.main.content_main.*
@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     fun loadviewpager(){
         viewpager.adapter = MyOwnPageAdapter(supportFragmentManager)
         tabLayout.setupWithViewPager(viewpager)
-        tabLayout.addOnTabSelectedListener(object :TabLayout.OnTabSelectedListener{
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
             override fun onTabReselected(p0: TabLayout.Tab?) {
             }
 
@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 loadviewpager()
             }
             else{
-                android.support.v7.app.AlertDialog.Builder(this@MainActivity,R.style.myDialog)
+                androidx.appcompat.app.AlertDialog.Builder(this@MainActivity,R.style.myDialog)
                     .setTitle("Alert")
                     .setMessage("Sorry without permission you can not use this app")
                     .setNegativeButton("ok", DialogInterface.OnClickListener{dialog, which ->

@@ -1,57 +1,68 @@
 package com.vishal.galleryapp.MainScreen.photos
 
 import android.content.Context
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.util.Log
-import android.view.LayoutInflater
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
-import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
-import com.futuremind.recyclerviewfastscroll.SectionTitleProvider
-import com.mlsdev.animatedrv.AnimatedRecyclerView
-import com.vishal.galleryapp.Objects.CustomGridLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.vishal.galleryapp.Objects.ImageData
 import com.vishal.galleryapp.R
+import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters
+import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection
 import java.util.*
-import kotlin.collections.HashMap
-import kotlin.math.log
 
-class PhotosMainAdapter(var context: Context, var map: HashMap<String,LinkedList<ImageData>>,var keylist:LinkedList<String>) :
-    RecyclerView.Adapter<PhotosMainAdapter.Holder>(), SectionTitleProvider {
-
-    lateinit var adapter :PhotosSubAdapter
-
-    override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): Holder {
-        return Holder(LayoutInflater.from(context).inflate(R.layout.photositem, viewGroup, false))
+class Section(var context:Context,var key:String,var list:LinkedList<ImageData>):
+    StatelessSection(
+        SectionParameters.builder()
+            .itemResourceId(R.layout.photossubitem)
+            .headerResourceId(R.layout.recyclerheaderitem)
+            .build()
+    ) {
+    override fun getContentItemsTotal(): Int {
+        return list.size
     }
 
-    override fun onBindViewHolder(holder: Holder, i: Int) {
-        holder.textView.text = keylist[i]
-        adapter = PhotosSubAdapter(context = context,list = map[keylist[i]]!!)
-        holder.animatedRecyclerView.adapter = adapter
-        holder.animatedRecyclerView.setHasFixedSize(true)
-        holder.animatedRecyclerView.layoutManager = CustomGridLayoutManager(context,3)
+    override fun getItemViewHolder(view: View?): androidx.recyclerview.widget.RecyclerView.ViewHolder {
+        return ItemHolder(view!!) as androidx.recyclerview.widget.RecyclerView.ViewHolder
+    }
+    override fun onBindItemViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder?, position: Int) {
+        var itemHolder = holder as ItemHolder
+        Glide.with(context)
+            .load(list[position].uri.toString())
+            .centerCrop()
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .skipMemoryCache(true)
+            .into(itemHolder.image)
+
+    }
+
+    override fun getHeaderViewHolder(view: View?): androidx.recyclerview.widget.RecyclerView.ViewHolder {
+        return HeaderHolder(view!!) as androidx.recyclerview.widget.RecyclerView.ViewHolder
+    }
+    override fun onBindHeaderViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder?) {
+        var headerHolder=holder as HeaderHolder
+        headerHolder.headertext.text = key
     }
 
 
+}
 
-
-    override fun getItemCount(): Int {
-        return map.size
+class ItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    var image:ImageView
+    var blackview:View
+    var check_image:ImageView
+    init {
+        image = itemView.findViewById(R.id.photoitemimage)
+        blackview = itemView.findViewById(R.id.black_view)
+        check_image =itemView.findViewById(R.id.check_icon_image)
     }
+}
 
-    inner class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        internal var animatedRecyclerView: AnimatedRecyclerView
-        internal var textView: TextView
-
-        init {
-            animatedRecyclerView = itemView.findViewById(R.id.photos_sub_recyclerview)
-            textView = itemView.findViewById(R.id.recyclerhead)
-        }
-    }
-
-    override fun getSectionTitle(position: Int): String {
-        return keylist[position]
+class HeaderHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    var headertext:TextView
+    init {
+        headertext = itemView.findViewById(R.id.headertext)
     }
 }

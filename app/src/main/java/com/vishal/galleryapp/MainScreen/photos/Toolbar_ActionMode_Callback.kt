@@ -1,7 +1,7 @@
 package com.vishal.galleryapp.MainScreen.photos
 
 import android.content.Context
-import android.support.v7.view.ActionMode
+import androidx.appcompat.view.ActionMode
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -12,8 +12,7 @@ import kotlin.collections.ArrayList
 
 class Toolbar_ActionMode_Callback(
     private val context: Context,
-    private val photosfrag: photosfrag,
-    private val adapter: PhotosMainAdapter
+    private val photosfrag: photosfrag
 ) : ActionMode.Callback {
 
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {

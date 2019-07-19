@@ -5,28 +5,30 @@ import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
 import android.provider.MediaStore
-import android.support.v4.app.Fragment
-import android.support.v4.widget.SwipeRefreshLayout
+import androidx.fragment.app.Fragment
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.vishal.galleryapp.Objects.ImageData
 
 import java.util.*
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.vishal.galleryapp.R
 import java.io.File
-import android.support.v7.view.ActionMode
+import androidx.appcompat.view.ActionMode
 import android.util.Log
-import com.futuremind.recyclerviewfastscroll.FastScroller
+import androidx.recyclerview.widget.GridLayoutManager
+import com.mlsdev.animatedrv.AnimatedRecyclerView
 import com.vishal.galleryapp.MainActivity
-import com.vishal.galleryapp.Objects.CustomFastScroll.CustomScrollViewProvider
 import com.vishal.galleryapp.Objects.CustomLinearLayoutManager
+import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
-import kotlin.collections.LinkedHashMap
-import kotlin.collections.LinkedHashSet
+
+
+
 
 
 class photosfrag : Fragment() {
@@ -39,8 +41,9 @@ class photosfrag : Fragment() {
 
     var deletlist:ArrayList<Int> = ArrayList()
     lateinit var list:LinkedList<ImageData>
+    lateinit var keylist:LinkedList<String>
+    lateinit var sectionAdapter: SectionedRecyclerViewAdapter
 
-    lateinit var adapter:PhotosMainAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,6 +51,8 @@ class photosfrag : Fragment() {
     ): View? {
         v = inflater.inflate(R.layout.photosfrag, container, false)
 
+        keylist = LinkedList()
+        sectionAdapter = SectionedRecyclerViewAdapter();
         setrecycler()
 
         return v
@@ -56,6 +61,34 @@ class photosfrag : Fragment() {
 
 
     fun setrecycler(){
+        var tempmap = getImagemap()
+        for (key in keylist) {
+            sectionAdapter.addSection(Section(context = context!!,key = key,list = tempmap[key]!!))
+        }
+        var recyclerView = v.findViewById<AnimatedRecyclerView>(R.id.photos_recyclerview)
+        var glm = GridLayoutManager(context,3)
+        glm.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                when (sectionAdapter.getSectionItemViewType(position)) {
+                    0 -> return 3
+                    else -> return 1
+                }
+            }
+        }
+        glm.initialPrefetchItemCount = 50
+        recyclerView.layoutManager = glm
+        recyclerView.adapter = sectionAdapter
+    }
+
+    fun actionmod_destroy(){
+        if (num==0) {
+            actionmod!!.finish()
+            actionmod = null
+            (activity as MainActivity).hidewithphotos(false)
+        }
+    }
+
+    fun getImagemap():HashMap<String,LinkedList<ImageData>>{
         var tempmap = HashMap<String,LinkedList<ImageData>>()
         var uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         var projection = arrayOf(MediaStore.MediaColumns.DATA,
@@ -70,7 +103,6 @@ class photosfrag : Fragment() {
         var nameindex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
         var dateindex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED)
 
-        var keylist=LinkedList<String>()
         while (cursor.moveToNext()){
             var file = File(Uri.parse(cursor.getString(dataindex)).toString())
             var date = Date(file.lastModified())
@@ -80,7 +112,7 @@ class photosfrag : Fragment() {
             if (todaykey.equals(key)){
                 key = "today"
             }
-            if (!keylist.contains(key)) {
+            if (!keylist.contains(key)){
                 keylist.add(key)
             }
             if (tempmap.containsKey(key)){
@@ -106,27 +138,8 @@ class photosfrag : Fragment() {
                 tempmap[key] = list
             }
         }
-
-        var recycler = v.findViewById<RecyclerView>(R.id.photos_recyclerview)
-
-        AsyncTask.execute(Runnable {
-            adapter = PhotosMainAdapter(map = tempmap,context =context!!,keylist = keylist)
-            recycler.adapter = adapter
-            var fastscroll = v.findViewById<FastScroller>(R.id.fastscroll)
-            fastscroll.setViewProvider(CustomScrollViewProvider())
-            fastscroll.setRecyclerView(recycler)
-            recycler.layoutManager = CustomLinearLayoutManager(context!!,LinearLayoutManager.VERTICAL,false);
-        })
+        return tempmap;
     }
-
-    fun actionmod_destroy(){
-        if (num==0) {
-            actionmod!!.finish()
-            actionmod = null
-            (activity as MainActivity).hidewithphotos(false)
-        }
-    }
-
 
     fun getday(day: Int): String {
         when (day) {
@@ -157,7 +170,5 @@ class photosfrag : Fragment() {
         }
         return "Jan"
     }
-
-
 
 }
