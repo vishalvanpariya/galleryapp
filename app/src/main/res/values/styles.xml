@@ -12,7 +12,11 @@
         <item name="actionModeStyle">@style/ActionModeStyle</item>
         <item name="actionModeCloseDrawable">@drawable/cancel</item>
         <item name="android:actionOverflowButtonStyle">@style/ActionButtonOverflow</item>
+        <item name="android:windowContentTransitions">true</item>
     </style>
+
+
+
 
 
     <style name="ActionButtonOverflow" parent="@style/Widget.AppCompat.ActionButton.Overflow">

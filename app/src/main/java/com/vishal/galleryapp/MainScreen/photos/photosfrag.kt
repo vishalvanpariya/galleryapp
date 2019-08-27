@@ -34,10 +34,8 @@ import kotlin.collections.HashMap
 class photosfrag : Fragment() {
 
     var num = 0
-    private var actionmod: ActionMode? = null
 
-    private lateinit var v: View;
-    private var mSwipeRefreshLayout: SwipeRefreshLayout? = null
+    private lateinit var v: View
 
     var deletlist:ArrayList<Int> = ArrayList()
     lateinit var list:LinkedList<ImageData>
@@ -62,8 +60,14 @@ class photosfrag : Fragment() {
 
     fun setrecycler(){
         var tempmap = getImagemap()
+        var mainlist  = LinkedList<ImageData>()
+        var templist  = LinkedList<ImageData>()
         for (key in keylist) {
-            sectionAdapter.addSection(Section(context = context!!,key = key,list = tempmap[key]!!))
+            mainlist.addAll(tempmap[key]!!)
+        }
+        for (key in keylist) {
+            sectionAdapter.addSection(Section(context = context!!,key = key,list = tempmap[key]!!,startpos = templist.size,mainlist = mainlist))
+            templist.addAll(tempmap[key]!!)
         }
         var recyclerView = v.findViewById<AnimatedRecyclerView>(R.id.photos_recyclerview)
         var glm = GridLayoutManager(context,3)
@@ -78,14 +82,10 @@ class photosfrag : Fragment() {
         glm.initialPrefetchItemCount = 50
         recyclerView.layoutManager = glm
         recyclerView.adapter = sectionAdapter
-    }
 
-    fun actionmod_destroy(){
-        if (num==0) {
-            actionmod!!.finish()
-            actionmod = null
-            (activity as MainActivity).hidewithphotos(false)
-        }
+        sectionAdapter
+
+
     }
 
     fun getImagemap():HashMap<String,LinkedList<ImageData>>{
@@ -118,7 +118,7 @@ class photosfrag : Fragment() {
             if (tempmap.containsKey(key)){
                 tempmap[key]!!.add(
                     ImageData(
-                        uri = Uri.parse(cursor.getString(dataindex)),
+                        uri = Uri.parse(cursor.getString(dataindex)).toString(),
                         name = cursor.getString(nameindex),
                         date = Date(file.lastModified()),
                         foldername = cursor.getString(bucketnameindex)
@@ -129,7 +129,7 @@ class photosfrag : Fragment() {
                 var list = LinkedList<ImageData>()
                 list.add(
                     ImageData(
-                        uri = Uri.parse(cursor.getString(dataindex)),
+                        uri = Uri.parse(cursor.getString(dataindex)).toString(),
                         name = cursor.getString(nameindex),
                         date = Date(file.lastModified()),
                         foldername = cursor.getString(bucketnameindex)

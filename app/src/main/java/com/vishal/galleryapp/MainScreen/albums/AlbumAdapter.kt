@@ -28,7 +28,7 @@ class AlbumAdapter(
     }
 
     override fun onBindViewHolder(holder: Holder, i: Int) {
-        if (list.get(i).javaClass.equals(ImageData(uri = Uri.parse("f"),name = "df",date = Date(),foldername = "fs").javaClass)){
+        if (list.get(i).javaClass.equals(ImageData(uri = Uri.parse("f").toString(),name = "df",date = Date(),foldername = "fs").javaClass)){
             var temp = list.get(i) as ImageData
             Glide.with(context)
                 .load(temp.uri.toString())

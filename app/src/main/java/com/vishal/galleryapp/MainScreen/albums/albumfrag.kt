@@ -112,7 +112,7 @@ class albumfrag : Fragment() {
         while (cursor.moveToNext()){
             templist.add(
                 ImageData(
-                    uri = Uri.parse(cursor.getString(dataindex)),
+                    uri = Uri.parse(cursor.getString(dataindex)).toString(),
                     name = cursor.getString(nameindex),
                     date = Date(cursor.getLong(dateindex)),
                     foldername = cursor.getString(bucketnameindex)
